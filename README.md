@@ -1,4 +1,4 @@
-# ectf-client
+# E-CTF-VUE
 
 ## 基于VUE开发的E-CTF平台前端模板
 
