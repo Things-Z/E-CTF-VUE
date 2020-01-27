@@ -1,7 +1,7 @@
 # E-CTF-VUE
 
 ## 基于VUE开发的E-CTF平台前端模板
-[E-CTF](http://39.106.85.139/index)
+项目实例: [E-CTF](http://39.106.85.139/index)
 
 需要配合[API端](https://github.com/RGDZ-GZU/E-CTF-API.git)一起使用
 
