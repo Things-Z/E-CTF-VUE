@@ -6,14 +6,13 @@
 			</el-main>
 			<el-aside width="500px">
 				<el-card class="box-card card">
-					<el-button type="text" class="forget-pass" :disabled="choice" @click="ChangeChoice">登录</el-button>
+					<el-button type="text" class="forget-pass" :disabled="type===true" @click="type=!type">登录</el-button>
 					<el-divider direction="vertical"></el-divider>
-					<el-button type="text" class="forget-pass" :disabled="!choice" @click="ChangeChoice">注册</el-button>
+					<el-button type="text" class="forget-pass" :disabled="type===false" @click="type=!type">注册</el-button>
 					<el-divider></el-divider>
-					<transition name="el-fade-in-linear">
-						<login-from v-if="choice"></login-from>
-						<register-from v-if="!choice"></register-from>
-					</transition>
+					<el-collapse-transition>
+						<form-com :type="type" :key="type"></form-com>
+					</el-collapse-transition>
 				</el-card>
 			</el-aside>
 		</el-container>
@@ -21,23 +20,16 @@
 </template>
 
 <script>
-	import LoginFrom from './login/index';
-	import RegisterFrom from './register/index'
+	import FormCom from "./components/FormCom"
 
 	export default {
 		components: {
-			LoginFrom: LoginFrom,
-			RegisterFrom: RegisterFrom
+			FormCom: FormCom
 		},
 		name: 'relo',
 		data: () => {
 			return {
-				choice: true
-			}
-		},
-		methods: {
-			ChangeChoice: function() {
-				this.$data.choice = !this.$data.choice;
+				type: true
 			}
 		},
 	}

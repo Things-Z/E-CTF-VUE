@@ -1,77 +1,181 @@
 <template>
 	<div id="challenges">
 		<el-container>
+			<el-aside width="5%">
+			</el-aside>
 			<el-main style="height: auto;">
-				<el-tabs tab-position="left" style="margin-left: 10%; margin-right 10%; height: 100%;"
-					@tab-click="handleClick">
-					<el-tab-pane in="android">
-						<span slot="label"><i class="el-icon-mobile-phone" style="margin-right: 2px;"/>Android</span>
+				<el-tabs tab-position="left" style="margin-left: 10%; margin-right 10%; height: 100%;" v-model="challengeType">
+					<el-tab-pane :name="name" v-for="(icon, name) in challenges" :key="name">
+						<span slot="label"><i :class="'el-icon-'+icon" style="margin-right: 2px;" />{{name}}</span>
 					</el-tab-pane>
-					<el-tab-pane id="crypto">
-						<span slot="label"><i class="el-icon-key" style="margin-right: 2px;"/>Crypto</span>
-					</el-tab-pane>
-					<el-tab-pane id="misc">
-						<span slot="label"><i class="el-icon-connection" style="margin-right: 2px;"/>Misc</span>
-					</el-tab-pane>
-					<el-tab-pane id="pwn">
-						<span slot="label"><i class="el-icon-cpu" style="margin-right: 2px;"/>Pwn</span>
-					</el-tab-pane>
-					<el-tab-pane id="reverse">
-						<span slot="label"><i class="el-icon-refresh" style="margin-right: 2px;"/>Reverse</span>
-					</el-tab-pane>
-					<el-tab-pane id="web">
-						<span slot="label"><i class="el-icon-position" style="margin-right: 2px;"/>Web</span>
-					</el-tab-pane>
-					<div>{{info}}</div>
-					<el-divider></el-divider>
-					<challenge></challenge>
+					<div><i :class="'el-icon-'+challenges[challengeType]" style="margin-right: 2px;" />{{challengeType}}</div>
+					<el-divider content-position="right">
+						<el-popover v-if="role" placement="top-start" width="150" trigger="hover">
+							<div><i class="el-icon-circle-plus" style="color: #67C23A;"></i><span style="margin-left: 5px;">添加不同类型题目。</span></div>
+							<el-button slot="reference" type="primary" size="mini" icon="el-icon-plus" circle autofocus @click="showDialog=true"></el-button>
+						</el-popover>
+
+					</el-divider>
+					<challenge :type="challengeType" style="min-height: 400px" v-if="reload"></challenge>
 				</el-tabs>
 			</el-main>
 			<el-aside width="25%">
-				<user-info></user-info>
 			</el-aside>
 		</el-container>
+
+		<!-- form dialog -->
+		<el-dialog :visible="showDialog" center title="添加Challenge" :before-close="handleClose">
+			<el-form label-position='left' label-width="120px">
+
+				<el-form-item label="题目">
+					<el-input v-model="title" placeholder="请输入题目名字"></el-input>
+				</el-form-item>
+
+				<el-form-item label="类型">
+					<el-select v-model="type" placeholder="请选择题目类型">
+						<el-option :label="idx" :value="idx" v-for="(_, idx) in challenges" :key="idx"></el-option>
+					</el-select>
+				</el-form-item>
+
+				<el-form-item label="Flag">
+					<el-input v-model="flag" placeholder="请输入flag">
+						<template slot="prepend">E-CTF{</template>
+						<template slot="append">}</template>
+					</el-input>
+				</el-form-item>
+
+				<el-form-item label="描述" placeholder="请添加描述">
+					<el-input type="textarea" v-model="des"></el-input>
+				</el-form-item>
+
+				<el-form-item label="分数">
+					<span class="demonstration">{{score}}</span>
+					<el-slider v-model="score" :step="50" show-stops :max="1000">
+					</el-slider>
+				</el-form-item>
+			</el-form>
+
+			<div slot="footer" class="dialog-footer">
+				<el-button @click="handleClose">取 消</el-button>
+				<el-button type="primary" @click="Submit">确 定</el-button>
+			</div>
+		</el-dialog>
 	</div>
 </template>
 
 <script>
-	import UserInfo from './components/userInfo'
+	import {
+		AddChallenge
+	} from '@/api/api.js'
+
+
 	import Challenge from './components/challenge'
-	
-	const challenges = ['Android', 'Crypto', 'Misc', 'Pwn', 'Reverse', 'Web'];
-	
+
 	export default {
-		components:{
-			UserInfo: UserInfo,
-			Challenge: Challenge
+		components: {
+			Challenge: Challenge,
 		},
 		name: "challenges",
 		data: () => {
 			return {
-				challenges:challenges,
-				info:challenges[0]
+				reload: true,
+				user: {},
+				challengeType: 'Pwn',
+				challenges: {
+					"Android": "mobile-phone",
+					"Crypto": "lock",
+					"Misc": "connection",
+					"Pwn": "cpu",
+					"Reverse": "refresh",
+					"Web": "monitor"
+				},
+				// 表单value
+				showDialog: false,
+				title: '',
+				type: '',
+				flag: '',
+				des: '',
+				score: 500
 			}
 		},
-		methods:{
-			handleClick: function(tab, event){
-				this.$data.info = challenges[tab.index];
+		methods: {
+			handleClose: function() {
+				this.$confirm('此操作将不会放弃当前已编辑内容!!!', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(() => {
+					this.showDialog = false;
+					this.$message({
+						type: 'info',
+						message: '放弃添加题目!'
+					});
+				})
+			},
+			Submit: async function() {
+				let rsp = await AddChallenge(this, {
+					'type': this.type,
+					'title': this.title,
+					'des': this.des,
+					'score': this.score,
+					'flag': 'E-CTF{' + this.flag + "}"
+				})
+				if (rsp.data.code == 200) {
+					this.showDialog = false
+					this.$notify({
+						title: '成功',
+						message: '添加题目成功',
+						type: 'success'
+					});
+					//重新渲染子组件
+					this.ReloadSelf()
+
+				} else {
+					this.$confirm('添加题目失败', '提示', {
+						confirmButtonText: '确定',
+						type: 'error'
+					})
+				}
+			},
+			ReloadSelf: function() {
+				this.reload = false;
+				this.$nextTick(() => {
+					this.reload = true
+				})
 			}
-		}
+		},
+		computed:{
+			role: function(){
+				return this.$store.state.user.role
+			}
+		},
+		watch: {
+			$route: function(to, from) {
+				if (to.path == '/challenges') {
+					//重新渲染子组件
+					this.ReloadSelf();
+				}
+			}
+		},
 	}
 </script>
 
 <style scoped>
 	.el-aside {
-/* 		background-color: #D3DCE6;
+		/* 		background-color: #D3DCE6;
 		color: #333; */
 		text-align: center;
-/* 		line-height: 200px; */
+		/* 		line-height: 200px; */
 	}
 
 	.el-main {
-/* 		background-color: #E9EEF3;
+		/* 		background-color: #E9EEF3;
 		color: #333; */
 		text-align: center;
-/* 		line-height: 160px; */
+		/* 		line-height: 160px; */
+	}
+
+	.form-dialog {
+		max-width: 500px;
 	}
 </style>

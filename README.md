@@ -2,8 +2,6 @@
 
 ## 基于VUE开发的E-CTF平台前端模板
 
-![E-CTF](./img/E-CTF.gif)
-
 ## Project setup
 ```
 npm install

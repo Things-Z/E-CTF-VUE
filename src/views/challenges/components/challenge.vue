@@ -1,119 +1,103 @@
 <template>
-	<div id="challenge">
+	<div id="challenge" v-loading="loading">
 		<el-row :gutter="20" class="challenge-row" justify="space-around" v-for="(challenges, _) in challengeData" :key="_">
-			<el-col :span="6" v-for="(challenge, _) in challenges" :key="_">
-				<el-card class="box-card challenge-card" shadow="hover" @click.native="CardClick(challenge)">
-					<div class="card-text">
-						<p>{{challenge.title}}</p>
-						<p>Score: {{challenge.score}}</p>
-						<div v-show="challenge.solved" class="solve challenge-solved">Sovled: <span style="color: #00dd30;">✔</span></div>
-						<div v-show="!challenge.solved" class="solve challenge-nosolved">No Sovled</div>
-					</div>
-				</el-card>
+			<el-col :span="6" v-for="(challenge, i) in challenges" :key="i" class="challenge-col">
+				<challenge-card :data="challenge" :key="i" v-on:delete="DelCard"></challenge-card>
 			</el-col>
 		</el-row>
 	</div>
 </template>
 
 <script>
+	import {
+		GetChallenges,
+		DelChallenge
+	} from '@/api/api.js'
+
+	import ChallengeCard from './ChallengeCard'
+
 	export default {
+		components: {
+			ChallengeCard: ChallengeCard
+		},
+
 		name: 'challenge',
+		props: [
+			'type'
+		],
 		methods: {
-			CardClick: function(challenge) {
-				console.log(challenge);
-				this.$prompt(challenge.des, challenge.title, {
-					confirmButtonText: '提交',
+			InitData: async function() {
+				// Init challenge
+				try {
+					this.loading = true;
+					this.challengeData = [];
+					let rsp = await GetChallenges(this, this.type, this.$store.state.token);
+					let data = rsp.data.challenges;
+					let idx = 0;
+					while (idx < data.length) {
+						this.challengeData.push(data.slice(idx, idx += 4));
+					}
+				} catch (e) {
+					//TODO handle the exception
+					this.$message({
+						type: 'error',
+						message: '获取数据失败,请检查网络!'
+					});
+				} finally {
+					setTimeout(() => {
+						this.loading = false;
+					}, 500)
+				}
+			},
+			DelCard: function(challenge) {
+				// Del challenge
+				this.$confirm('此操作不可逆，确定要删除:' + challenge.title, '提示', {
+					confirmButtonText: '确定',
 					cancelButtonText: '取消',
-					center: true,
-					dangerouslyUseHTMLString: true
-				}).then(({
-					value
-				}) => {
-					this.$notify({
-						title: '成功',
-						message: '提交flag正确',
-						type: 'success'
-					});
-				}).catch(() => {
-					this.$notify({
-						type: 'info',
-						title: '消息',
-						message: '取消输入',
-					});
+					type: 'warning'
+				}).then(async () => {
+					let rsp = await DelChallenge(this, challenge.cid);
+					if (rsp.data.code == 200) {
+						this.$message({
+							type: 'warning',
+							message: '已删除:' + challenge.title
+						});
+						this.InitData(this.challengeData);
+					} else {
+						this.$message({
+							type: 'error',
+							message: '删除失败'
+						});
+					}
 				})
+			}
+		},
+		created: function() {
+			this.InitData();
+		},
+		computed: {
+			token: function() {
+				return this.$store.state.token;
+			}
+		},
+		watch: {
+			type: function(val) {
+				// 实时切换web
+				this.InitData()
+			},
+			token: function() {
+				this.InitData();
 			}
 		},
 		data: () => {
 			return {
+				loading: true,
 				activeIndex: '1',
-				challengeData: [
-					[{
-							"title": 'babyrop1',
-							"des": "This is pwn pwn pwn.",
-							"score": 500,
-							"solved": true
-						},
-						{
-							"title": 'babyrop2',
-							"des": `nc nc.eonew.cn 10002<br/>
-												http://file.eonew.cn/pwn_challenge/bin/no_leak<br/>
-												http://file.eonew.cn/pwn_challenge/libc/libc-2.27.so<br/>`,
-							"score": 500,
-							"solved": false
-						},
-						{
-							"title": 'babyrop3',
-							"des": "This is pwn pwn pwn.",
-							"score": 500,
-							"solved": true
-						},
-						{
-							"title": 'babyrop1',
-							"des": "This is pwn pwn pwn.",
-							"score": 500,
-							"solved": true
-						}
-					],
-					[{
-						"title": 'babyrop2',
-						"des": "This is pwn pwn pwn.",
-						"score": 500,
-						"solved": false
-					}]
-				]
+				challengeData: []
 			}
 		}
 	}
 </script>
 
 <style scoped>
-	.challenge-card {
-		min-height: 200px;
-		margin-top: 10px;
-		margin-bottom: 10px;
-	}
-
-	.challenge-card:hover {
-		cursor: pointer;
-	}
-
-	.card-text {
-		margin-top: 35%;
-	}
-
-	.challenge-nosolved,
-	.challenge-solved,
-	.solve {
-		margin-top: 30px;
-		font-size: 18px;
-		font-weight: bold;
-	}
-
-	.challenge-solved {
-		color: #66b1ff;
-	}
-
-	.challenge-nosolved {
-		color: #ff2222
-	}
 </style>

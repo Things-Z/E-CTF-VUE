@@ -1,0 +1,129 @@
+<template>
+	<div id="challenge-card">
+		<el-card :body-style="{ padding: '0px' }" class="box-card challenge-card" shadow="hover">
+			<el-row>
+				<div style="float: right;">
+					<el-popover v-if="role" placement="top-start" width="150" trigger="hover">
+						<div><i class="el-icon-info" style="color: red;"></i><span style="margin-left: 5px;">删除题目,高危操作!</span></div>
+						<el-button slot="reference" style="float: right; padding: 3px 0" type="text" @click="Close">
+							<i class="el-icon-close" style="color: #F56C6C;"></i></el-button>
+					</el-popover>
+				</div>
+			</el-row>
+			<div class="card-text" @click="CardClick">
+				<p>{{challenge.title}}</p>
+				<p>Score: {{challenge.score}}</p>
+				<div v-if="challenge.solved" class="solve challenge-solved">Sovled: <span style="color: #00dd30;">✔</span></div>
+				<div v-if="!challenge.solved" class="solve challenge-nosolved">No Sovled</div>
+			</div>
+		</el-card>
+	</div>
+</template>
+
+<script>
+	import {
+		SubmitFlag
+	} from '@/api/api.js'
+
+	export default {
+		props: ['data'],
+		computed: {
+			challenge: function() {
+				let data = this.data;
+				data.des = data.des.replace(/[\n\r]/g, '<br/>');
+				return data;
+			},
+			role: function(){
+				return this.$store.state.user.role
+			}
+		},
+		name: 'ChallengeCard',
+		methods: {
+			Close: function() {
+				this.$emit('delete', this.challenge);
+			},
+			CardClick: function() {
+				this.$prompt(this.challenge.des, this.challenge.title, {
+					confirmButtonText: '提交',
+					cancelButtonText: '取消',
+					center: true,
+					dangerouslyUseHTMLString: true
+				}).then(async ({
+					value
+				}) => {
+					//检查是否登录
+					if (this.$store.state.token) {
+						//提交flag
+						let rsp = await SubmitFlag(this, this.challenge.cid, value, this.$store.state.token);
+						if (rsp.data.code == 200) {
+							this.challenge.solved = true;
+							this.$notify({
+								title: '成功',
+								message: '提交flag正确',
+								type: 'success'
+							});
+						} else if(rsp.data.code == 300){
+							this.$notify({
+								title: '警告',
+								message: '请勿重复提交!',
+								type: 'warning'
+							});
+						} else {
+							this.$notify({
+								title: '错误',
+								message: 'flag错误',
+								type: 'error'
+							});
+						}
+
+					} else {
+						this.$confirm('请先登录', '提示', {
+							confirmButtonText: '确定',
+							cancelButtonText: '取消',
+							type: 'warning'
+						})
+					}
+				}).catch(() => {
+					this.$notify({
+						type: 'info',
+						title: '消息',
+						message: '取消输入',
+					});
+				})
+			}
+		}
+	}
+</script>
+
+<style scoped>
+	.challenge-card {
+		min-height: 200px;
+		margin-top: 10px;
+		margin-bottom: 10px;
+
+	}
+
+	.challenge-card:hover {
+		cursor: pointer;
+	}
+
+	.card-text {
+		margin-top: 10%;
+	}
+
+	.challenge-nosolved,
+	.challenge-solved,
+	.solve {
+		margin-top: 30px;
+		font-size: 18px;
+		font-weight: bold;
+	}
+
+	.challenge-solved {
+		color: #66b1ff;
+	}
+
+	.challenge-nosolved {
+		color: #ff2222
+	}
+</style>

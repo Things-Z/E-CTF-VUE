@@ -11,7 +11,6 @@
 		<div class="footer footer-line">
 			<lay-footer></lay-footer>
 		</div>
-		
 	</div>
 </template>
 
