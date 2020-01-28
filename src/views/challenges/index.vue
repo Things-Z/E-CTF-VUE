@@ -10,7 +10,7 @@
 					</el-popover>
 				</el-divider>
 			</div>
-			<el-tabs tab-position="left" style="margin-left: 10%; height: 100%;" v-model="challengeType">
+			<el-tabs tab-position="left" style="height: 100%;" v-model="challengeType">
 				<el-tab-pane :name="name" v-for="(icon, name) in challenges" :key="name">
 					<span slot="label"><i :class="'el-icon-'+icon" style="margin-right: 2px;" />{{name}}</span>
 				</el-tab-pane>
