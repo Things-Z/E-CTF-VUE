@@ -1,7 +1,7 @@
 <template>
 	<div id="app-main">
 		<!-- <el-button @click="Click"></el-button> -->
-		<transition name="el-fade-in-linear">
+		<transition name="el-fade-in-linear" mode="out-in">
 			<keep-alive>
 				<router-view :key="key" />
 			</keep-alive>

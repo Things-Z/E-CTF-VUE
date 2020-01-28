@@ -9,8 +9,8 @@ export function Login(vue, data) {
 export function GetUserInfo(vue, token) {
 	return vue.axios({
 		url: '/userInfo',
-		method: 'get',
-		params: {
+		method: 'post',
+		data: {
 			token
 		}
 	})
@@ -24,11 +24,21 @@ export function Register(vue, data) {
 	})
 }
 
+export function IsExists(vue, value) {
+	return vue.axios({
+		url: '/check_exists',
+		method: 'get',
+		params: {
+			value
+		}
+	})
+}
+
 export function GetChallenges(vue, ctype, token) {
 	return vue.axios({
 		url: '/challenges',
-		method: 'get',
-		params: {
+		method: 'post',
+		data: {
 			ctype,
 			token
 		}
@@ -43,12 +53,13 @@ export function AddChallenge(vue, data) {
 	})
 }
 
-export function DelChallenge(vue, cid) {
+export function DelChallenge(vue, cid, token) {
 	return vue.axios({
 		url: '/del_challenge',
-		method: 'get',
-		params: {
-			cid
+		method: 'post',
+		data: {
+			cid,
+			token
 		}
 	})
 }
@@ -56,8 +67,8 @@ export function DelChallenge(vue, cid) {
 export function SubmitFlag(vue, cid, flag, token) {
 	return vue.axios({
 		url: '/submit_flag',
-		method: 'get',
-		params: {
+		method: 'post',
+		data: {
 			cid,
 			flag,
 			token
@@ -81,19 +92,20 @@ export function AddAnnouncement(vue, data) {
 	})
 }
 
-export function DelAnnouncement(vue, aid) {
+export function DelAnnouncement(vue, aid, token) {
 	return vue.axios({
 		url: '/del_announcement',
-		method: 'get',
-		params:{
-			aid
+		method: 'post',
+		data: {
+			aid,
+			token
 		}
 	})
 }
 
-export function GetScoreCardData(vue){
+export function GetScoreCardData(vue) {
 	return vue.axios({
-		url:'/score_card',
+		url: '/score_card',
 		method: 'get'
 	})
 }

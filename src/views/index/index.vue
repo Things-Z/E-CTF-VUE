@@ -12,12 +12,12 @@
 				</el-divider>
 				<el-timeline v-if="reload">
 					<el-timeline-item v-for="(ann, idx) in anncs" :key="idx" :timestamp="ann.createTime.trim().split(/\s+/)[0]"
-						placement="top" :color="nodeColor">
+					 placement="top" :color="nodeColor">
 						<el-card>
 							<div slot="header" class="clearfix">
 								<span>{{ann.title}}</span>
 								<el-popconfirm v-if="role" @onConfirm="DelAnnc(ann.aid)" confirmButtonText='确定' cancelButtonText='取消' icon="el-icon-info"
-									iconColor="red" title="确定删除该公告吗？" confirmButtonType="danger">
+								 iconColor="red" title="确定删除该公告吗？" confirmButtonType="danger">
 									<el-button slot="reference" style="float: right; padding: 3px 0" type="text"><i class="el-icon-close" style="color: #F56C6C;"></i></el-button>
 								</el-popconfirm>
 							</div>
@@ -86,7 +86,7 @@
 				}
 			},
 			DelAnnc: async function(aid) {
-				let rsp = await DelAnnouncement(this, aid);
+				let rsp = await DelAnnouncement(this, aid, this.$store.state.token);
 				this.$message({
 					type: 'success',
 					message: '删除成功'
@@ -109,22 +109,30 @@
 			Submit: async function() {
 				let rsp = await AddAnnouncement(this, {
 					'title': this.title,
-					'body': this.body
+					'body': this.body,
+					'token': this.$store.state.token,
 				})
-				console.log(rsp);
-				if (rsp.data.code == 200) {
-					this.showDialog = false;
-					this.$message({
-						type: 'success',
-						message: '更新公告成功!'
-					});
-					this.InitAnnc()
-				} else {
-					this.showDialog = false;
-					this.$message({
-						type: 'error',
-						message: '更新公告失败!'
-					});
+				this.showDialog = false;
+				switch (rsp.data.code) {
+					case 200:
+						this.$message({
+							type: 'success',
+							message: '更新公告成功!'
+						});
+						this.InitAnnc()
+						break;
+					case 500:
+						this.$message({
+							type: 'error',
+							message: 'token已失效!'
+						});
+						break;
+					default:
+						this.$message({
+							type: 'error',
+							message: '更新公告失败!'
+						});
+						break;
 				}
 			}
 		},

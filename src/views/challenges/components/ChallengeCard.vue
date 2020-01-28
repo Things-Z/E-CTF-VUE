@@ -33,7 +33,7 @@
 				data.des = data.des.replace(/[\n\r]/g, '<br/>');
 				return data;
 			},
-			role: function(){
+			role: function() {
 				return this.$store.state.user.role
 			}
 		},
@@ -55,33 +55,53 @@
 					if (this.$store.state.token) {
 						//提交flag
 						let rsp = await SubmitFlag(this, this.challenge.cid, value, this.$store.state.token);
-						if (rsp.data.code == 200) {
-							this.challenge.solved = true;
-							this.$notify({
-								title: '成功',
-								message: '提交flag正确',
-								type: 'success'
-							});
-						} else if(rsp.data.code == 300){
-							this.$notify({
-								title: '警告',
-								message: '请勿重复提交!',
-								type: 'warning'
-							});
-						} else {
-							this.$notify({
-								title: '错误',
-								message: 'flag错误',
-								type: 'error'
-							});
+						switch (rsp.data.code) {
+							// glag正确
+							case 200:
+								this.challenge.solved = true;
+								this.$notify({
+									title: '成功',
+									message: '提交flag正确',
+									type: 'success'
+								});
+								break;
+								// flag错误
+							case 600:
+								this.$notify({
+									title: '错误',
+									message: 'flag错误',
+									type: 'error'
+								});
+								break;
+								// 重复提交
+							case 700:
+								this.$notify({
+									title: '警告',
+									message: '请勿重复提交!',
+									type: 'warning'
+								});
+								break;
+								// 未登录
+							case 400:
+								this.$confirm('请先登录', '提示', {
+									confirmButtonText: '确定',
+									cancelButtonText: '取消',
+									type: 'warning'
+								})
+								break;
+							case 500:
+								this.$message({
+									type: 'error',
+									message: 'token已失效!'
+								});
+								break;
+							default:
+								this.$message({
+									type: 'error',
+									message: '未知错误，请联系管理员'
+								});
+								break;
 						}
-
-					} else {
-						this.$confirm('请先登录', '提示', {
-							confirmButtonText: '确定',
-							cancelButtonText: '取消',
-							type: 'warning'
-						})
 					}
 				}).catch(() => {
 					this.$notify({

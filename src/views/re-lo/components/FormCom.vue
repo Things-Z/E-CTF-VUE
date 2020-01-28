@@ -1,23 +1,23 @@
 <template>
 	<div id="form-com">
-		<el-form status-icon>
-			<el-form-item prop="email" v-show="!type">
-				<el-input type="text" placeholder="username" v-model="name">
+		<el-form status-icon :rules="rules" :model="formData" ref="formData">
+			<el-form-item prop="name" v-show="!type">
+				<el-input type="text" placeholder="username" v-model="formData.name">
 					<i slot="prefix" class="el-input__icon el-icon-user"></i>
 				</el-input>
 			</el-form-item>
 			<el-form-item prop="email">
-				<el-input type="e-mail" placeholder="E-mail" v-model="email">
+				<el-input type="e-mail" placeholder="E-mail" v-model="formData.email">
 					<i slot="prefix" class="el-input__icon el-icon-message"></i>
 				</el-input>
 			</el-form-item>
 			<el-form-item prop="pass">
-				<el-input type="password" placeholder="Password" v-model="pass1" show-password>
+				<el-input type="password" placeholder="Password" v-model="formData.pass" show-password>
 					<i slot="prefix" class="el-input__icon el-icon-lock"></i>
 				</el-input>
 			</el-form-item>
-			<el-form-item prop="pass" v-show="!type">
-				<el-input type="password" placeholder="Repeat the Password" v-model="pass2" show-password>
+			<el-form-item prop="checkPass" v-show="!type">
+				<el-input type="password" placeholder="Repeat the Password" v-model="formData.checkPass" show-password>
 					<i slot="prefix" class="el-input__icon el-icon-lock"></i>
 				</el-input>
 			</el-form-item>
@@ -46,57 +46,151 @@
 	import {
 		Login,
 		Register,
+		IsExists,
 		GetUserInfo
 	} from '@/api/api.js'
 	export default {
 		props: ['type'],
 		name: "FormCom",
 		data: function() {
+			let checkIsexists = async (rule, value, callback) => {
+				if (!this.type) {
+					try{
+						let rsp = await IsExists(this, value);
+						if (rsp.data.code === 100) {
+							callback(new Error("已被注册"))
+						}
+						callback()
+					}catch(e){
+						//TODO handle the exception
+						callback(new Error("网络故障"))
+						this.$message({
+							type: 'error',
+							message: '获取数据失败,请检查网络!'
+						});
+					}
+				}
+			};
+
+			let validatePass = (rule, value, callback) => {
+				if (value === '') {
+					callback(new Error('请输入密码'));
+				} else {
+					if (this.formData.pass !== '' && !this.type) {
+						this.$refs.formData.validateField('checkPass');
+					}
+					callback();
+				}
+			};
+			let validatePass2 = (rule, value, callback) => {
+				if (!this.type) {
+					if (value === '') {
+						callback(new Error('请再次输入密码'));
+					} else if (value !== this.formData.pass) {
+						callback(new Error('两次输入密码不一致!'));
+					} else {
+						callback();
+					}
+				}
+			};
 			return {
-				url: "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg",
-				name: '',
-				email: '',
-				pass1: '',
-				pass2: '',
-				code: ''
+				// url: "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg",
+				formData: {
+					name: '',
+					email: '',
+					pass: '',
+					checkPass: ''
+				},
+				// code: '',
+				rules: {
+					name: [{
+							required: true,
+							message: '请输入ID',
+							trigger: ['blur', 'change'],
+						},
+						{
+							min: 3,
+							max: 10,
+							message: '长度在 3 到 10 个字符',
+							trigger: ['blur', 'change'],
+						},
+						{
+							validator: checkIsexists,
+							tirgger: ['blur']
+						}
+					],
+					email: [{
+							required: true,
+							message: '请输入邮箱地址',
+							trigger: 'blur'
+						},
+						{
+							type: 'email',
+							message: '请输入正确的邮箱地址',
+							trigger: ['blur', 'change'],
+						},
+						{
+							validator: checkIsexists,
+							tirgger: ['blur']
+						}
+					],
+					pass: [{
+							min: 6,
+							message: '密码至少需要6位数',
+							trigger: ['blur', 'change'],
+						},
+						{
+							validator: validatePass,
+							trigger: ['blur'],
+						}
+					],
+					checkPass: [{
+						validator: validatePass2,
+						trigger: ['blur'],
+					}],
+				},
 			}
 		},
 		computed: {
 
 		},
 		methods: {
-			Login: async function(){
+			Login: async function() {
 				let rsp = await Login(this, {
 					'email': this.email,
-					'pass': this.pass1
+					'pass': this.pass
 				})
-				if(rsp.data.token){
+				if (rsp.data.token) {
 					this.$store.state.token = rsp.data.token;
 					rsp = await GetUserInfo(this, this.$store.state.token);
-					if(rsp.data.code == 200){
+					if (rsp.data.code == 200) {
 						this.$store.state.user = rsp.data.user;
-						this.$router.push({path:'/challenges'})
+						this.$router.push({
+							path: '/challenges'
+						})
 					}
-					
+
 				}
 			},
-			Register: async function(){
+			Register: async function() {
 				let rsp = await Register(this, {
 					'username': this.name,
 					'email': this.email,
-					'pass': this.pass1
+					'pass': this.pass
 				})
-				if(rsp.data.token){
+				if (rsp.data.token) {
 					this.$store.state.token = rsp.data.token;
 					rsp = await GetUserInfo(this, this.$store.state.token);
-					if(rsp.data.code == 200){
+					if (rsp.data.code == 200) {
 						this.$store.state.user = rsp.data.user;
-						this.$router.push({path:'/challenges'})
+						this.$router.push({
+							path: '/challenges'
+						})
 					}
 				}
 			},
 			SubmitForm: function() {
-				if(this.type){
+				if (this.type) {
 					this.Login();
 					return
 				}

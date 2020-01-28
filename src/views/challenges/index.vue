@@ -114,6 +114,7 @@
 			},
 			Submit: async function() {
 				let rsp = await AddChallenge(this, {
+					'token': this.$store.state.token,
 					'type': this.type,
 					'title': this.title,
 					'des': this.des,

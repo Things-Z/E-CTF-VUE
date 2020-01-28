@@ -56,7 +56,7 @@
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(async () => {
-					let rsp = await DelChallenge(this, challenge.cid);
+					let rsp = await DelChallenge(this, challenge.cid, this.$store.state.token);
 					if (rsp.data.code == 200) {
 						this.$message({
 							type: 'warning',

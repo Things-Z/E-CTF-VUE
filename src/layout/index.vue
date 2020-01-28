@@ -36,7 +36,7 @@
 		margin: 0 50px 0 50px;
 	}
 	.main-container{
-		min-height: 500px;
+		min-height: 650px;
 	}
 	.footer-line{
 		border-top: 0.1px solid #8f8f8f;
