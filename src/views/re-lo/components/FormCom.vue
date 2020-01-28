@@ -53,21 +53,31 @@
 		props: ['type'],
 		name: "FormCom",
 		data: function() {
-			let checkIsexists = async (rule, value, callback) => {
+			let isExists = async (rule, value, callback) => {
+				let code = await this.CheckIsExists(value);
 				if (!this.type) {
-					try{
-						let rsp = await IsExists(this, value);
-						if (rsp.data.code === 100) {
-							callback(new Error("已被注册"))
-						}
-						callback()
-					}catch(e){
-						//TODO handle the exception
-						callback(new Error("网络故障"))
-						this.$message({
-							type: 'error',
-							message: '获取数据失败,请检查网络!'
-						});
+					switch (code) {
+						case 1001:
+							callback(new Error('已被注册'));
+							break;
+						case 100:
+							callback(new Error('网络故障'));
+							break;
+						default:
+							callback();
+							break;
+					}
+				} else {
+					switch (code) {
+						case 1000:
+							callback(new Error('该用户不存在'));
+							break;
+						case 100:
+							callback(new Error('网络故障'))
+							break;
+						default:
+							callback()
+							break;
 					}
 				}
 			};
@@ -115,7 +125,7 @@
 							trigger: ['blur', 'change'],
 						},
 						{
-							validator: checkIsexists,
+							validator: isExists,
 							tirgger: ['blur']
 						}
 					],
@@ -130,7 +140,7 @@
 							trigger: ['blur', 'change'],
 						},
 						{
-							validator: checkIsexists,
+							validator: isExists,
 							tirgger: ['blur']
 						}
 					],
@@ -155,10 +165,24 @@
 
 		},
 		methods: {
+			CheckIsExists: async function(value) {
+				try {
+					let rsp = await IsExists(this, value);
+					let code = rsp.data.code;
+					return code
+				} catch (e) {
+					//TODO handle the exception
+					this.$message({
+						type: 'error',
+						message: '获取数据失败,请检查网络!'
+					});
+					return 100;
+				}
+			},
 			Login: async function() {
 				let rsp = await Login(this, {
-					'email': this.email,
-					'pass': this.pass
+					'email': this.formData.email,
+					'pass': this.formData.pass
 				})
 				if (rsp.data.token) {
 					this.$store.state.token = rsp.data.token;
@@ -168,24 +192,27 @@
 						this.$router.push({
 							path: '/challenges'
 						})
+						this.$refs.formData.resetFields();
 					}
 
 				}
 			},
 			Register: async function() {
 				let rsp = await Register(this, {
-					'username': this.name,
-					'email': this.email,
-					'pass': this.pass
+					'username': this.formData.name,
+					'email': this.formData.email,
+					'pass': this.formData.pass
 				})
 				if (rsp.data.token) {
 					this.$store.state.token = rsp.data.token;
 					rsp = await GetUserInfo(this, this.$store.state.token);
 					if (rsp.data.code == 200) {
 						this.$store.state.user = rsp.data.user;
+						
 						this.$router.push({
 							path: '/challenges'
 						})
+						this.$refs.formData.resetFields();
 					}
 				}
 			},

@@ -1,27 +1,22 @@
 <template>
 	<div id="challenges">
-		<el-container>
-			<el-aside width="5%">
-			</el-aside>
-			<el-main style="height: auto;">
-				<el-tabs tab-position="left" style="margin-left: 10%; margin-right 10%; height: 100%;" v-model="challengeType">
-					<el-tab-pane :name="name" v-for="(icon, name) in challenges" :key="name">
-						<span slot="label"><i :class="'el-icon-'+icon" style="margin-right: 2px;" />{{name}}</span>
-					</el-tab-pane>
-					<div><i :class="'el-icon-'+challenges[challengeType]" style="margin-right: 2px;" />{{challengeType}}</div>
-					<el-divider content-position="right">
-						<el-popover v-if="role" placement="top-start" width="150" trigger="hover">
-							<div><i class="el-icon-circle-plus" style="color: #67C23A;"></i><span style="margin-left: 5px;">添加不同类型题目。</span></div>
-							<el-button slot="reference" type="primary" size="mini" icon="el-icon-plus" circle autofocus @click="showDialog=true"></el-button>
-						</el-popover>
-
-					</el-divider>
-					<challenge :type="challengeType" style="min-height: 400px" v-if="reload"></challenge>
-				</el-tabs>
-			</el-main>
-			<el-aside width="25%">
-			</el-aside>
-		</el-container>
+		<div style="height: auto;" class="container">
+			<div class="title">
+				<h1><i :class="'el-icon-'+challenges[challengeType]" style="margin-right: 2px;" />{{challengeType}}</h1>
+				<el-divider content-position="right">
+					<el-popover v-if="role" placement="top-start" width="150" trigger="hover">
+						<div><i class="el-icon-circle-plus" style="color: #67C23A;"></i><span style="margin-left: 5px;">添加不同类型题目。</span></div>
+						<el-button slot="reference" type="primary" size="mini" icon="el-icon-plus" circle autofocus @click="showDialog=true"></el-button>
+					</el-popover>
+				</el-divider>
+			</div>
+			<el-tabs tab-position="left" style="margin-left: 10%; margin-right 10%; height: 100%;" v-model="challengeType">
+				<el-tab-pane :name="name" v-for="(icon, name) in challenges" :key="name">
+					<span slot="label"><i :class="'el-icon-'+icon" style="margin-right: 2px;" />{{name}}</span>
+				</el-tab-pane>
+				<challenge :type="challengeType" style="min-height: 400px" v-if="reload"></challenge>
+			</el-tabs>
+		</div>
 
 		<!-- form dialog -->
 		<el-dialog :visible="showDialog" center title="添加Challenge" :before-close="handleClose">
@@ -145,8 +140,8 @@
 				})
 			}
 		},
-		computed:{
-			role: function(){
+		computed: {
+			role: function() {
 				return this.$store.state.user.role
 			}
 		},
@@ -162,21 +157,18 @@
 </script>
 
 <style scoped>
-	.el-aside {
-		/* 		background-color: #D3DCE6;
-		color: #333; */
-		text-align: center;
-		/* 		line-height: 200px; */
-	}
-
-	.el-main {
-		/* 		background-color: #E9EEF3;
-		color: #333; */
-		text-align: center;
-		/* 		line-height: 160px; */
-	}
-
 	.form-dialog {
 		max-width: 500px;
+	}
+
+	.container {
+		text-align: center;
+		margin: 0 auto;
+		/* 		margin-right: 16%; */
+		max-width: 85%;
+	}
+	.title {
+		margin: 0 auto;
+		max-width: 65%;
 	}
 </style>

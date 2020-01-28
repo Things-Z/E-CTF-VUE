@@ -7,6 +7,7 @@ export function Login(vue, data) {
 }
 
 export function GetUserInfo(vue, token) {
+	
 	return vue.axios({
 		url: '/userInfo',
 		method: 'post',

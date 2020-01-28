@@ -12,12 +12,12 @@
 				</el-divider>
 				<el-timeline v-if="reload">
 					<el-timeline-item v-for="(ann, idx) in anncs" :key="idx" :timestamp="ann.createTime.trim().split(/\s+/)[0]"
-					 placement="top" :color="nodeColor">
+						placement="top" :color="nodeColor">
 						<el-card>
 							<div slot="header" class="clearfix">
 								<span>{{ann.title}}</span>
 								<el-popconfirm v-if="role" @onConfirm="DelAnnc(ann.aid)" confirmButtonText='确定' cancelButtonText='取消' icon="el-icon-info"
-								 iconColor="red" title="确定删除该公告吗？" confirmButtonType="danger">
+									iconColor="red" title="确定删除该公告吗？" confirmButtonType="danger">
 									<el-button slot="reference" style="float: right; padding: 3px 0" type="text"><i class="el-icon-close" style="color: #F56C6C;"></i></el-button>
 								</el-popconfirm>
 							</div>
@@ -124,8 +124,10 @@
 					case 500:
 						this.$message({
 							type: 'error',
-							message: 'token已失效!'
+							message: 'token已失效,请重新登录!'
 						});
+						this.$store.state.token = '';
+						this.$store.state.user = {};
 						break;
 					default:
 						this.$message({

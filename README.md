@@ -5,6 +5,25 @@
 
 需要配合[API端](https://github.com/RGDZ-GZU/E-CTF-API.git)一起使用
 
+## 效果展示:
+> 还有很多细节动画效果没法展示，细节请查看项目实例
+
+![login](./img/login.png)
+
+![register](./img/register.png)
+
+![scoreCard](./img/scoreCard.png)
+
+![challenges](./img/challenges.png)
+
+![add_challenge](./img/add_challenge.png)
+
+![del_challenge](./img/del_challenge.png)
+
+![anncs](./img/anncs.png)
+
+![add_annc](./img/add_annc.png)
+
 ## Project setup
 ```
 npm install

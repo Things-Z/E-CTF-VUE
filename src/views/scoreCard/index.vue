@@ -9,8 +9,13 @@
 				</el-popover>
 			</el-divider>
 			<el-table v-loading="loading" :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
-				style="width: 100%" :default-sort="{prop: 'rank', order: 'ascending'}">
+			style="width: 100%" :default-sort="{prop: 'rank', order: 'ascending'}">
 				<el-table-column align='center' prop="rank" label="排名" sortable>
+					<template slot-scope="scope">
+						<i class="el-icon-s-flag" v-if="scope.row.name===$store.state.user.userName" style="float: left; font-size: 24px; color: limegreen;"></i>
+						<i :class="RankClass(scope.row.rank)" v-if="scope.row.rank<=3" :style="{marginLeft: FixMargin(scope.row.name)}"></i>
+						<span v-if="scope.row.rank>3" :style="{marginLeft: FixMargin(scope.row.name)}">{{ scope.row.rank}}</span>
+					</template>
 				</el-table-column>
 				<el-table-column align='center' prop="name" label="ID">
 				</el-table-column>
@@ -49,6 +54,24 @@
 			}
 		},
 		methods: {
+			FixMargin: function(name){
+				if(name===this.$store.state.user.userName){
+					return '-24px';
+				}
+				return '';
+			},
+			
+			RankClass: function(rank){
+				switch(rank){
+					case 1:
+						return 'el-icon-medal-1 '+"first";
+					case 2:
+						return 'el-icon-medal '+'second';
+					case 3:
+						return 'el-icon-medal ' + 'third';
+				}
+			},
+			
 			ResoleScope: function(scope) {
 				window.console.log(scope);
 			},
@@ -109,6 +132,21 @@
 <style scoped>
 	.container {
 		margin: 0 auto;
-		max-width: 85%;
+		max-width: 65%;
+	}
+
+	.first {
+		color: gold;
+		font-size: 32px;
+	}
+
+	.second {
+		color: silver;
+		font-size: 24px;
+	}
+
+	.third {
+		color: chocolate;
+		font-size: 16px;
 	}
 </style>
