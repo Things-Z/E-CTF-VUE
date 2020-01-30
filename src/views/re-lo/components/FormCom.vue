@@ -46,8 +46,7 @@
 	import {
 		Login,
 		Register,
-		IsExists,
-		GetUserInfo
+		IsExists
 	} from '@/api/api.js'
 	export default {
 		props: ['type'],
@@ -161,9 +160,6 @@
 				},
 			}
 		},
-		computed: {
-
-		},
 		methods: {
 			CheckIsExists: async function(value) {
 				try {
@@ -184,17 +180,12 @@
 					'email': this.formData.email,
 					'pass': this.formData.pass
 				})
-				if (rsp.data.token) {
-					this.$store.state.token = rsp.data.token;
-					rsp = await GetUserInfo(this, this.$store.state.token);
-					if (rsp.data.code == 200) {
-						this.$store.state.user = rsp.data.user;
-						this.$router.push({
-							path: '/challenges'
-						})
-						this.$refs.formData.resetFields();
-					}
-
+				if (rsp.data.user) {
+					this.$store.state.user = rsp.data.user;
+					this.$router.push({
+						path: '/challenges'
+					})
+					this.$refs.formData.resetFields();
 				}
 			},
 			Register: async function() {
@@ -203,17 +194,12 @@
 					'email': this.formData.email,
 					'pass': this.formData.pass
 				})
-				if (rsp.data.token) {
-					this.$store.state.token = rsp.data.token;
-					rsp = await GetUserInfo(this, this.$store.state.token);
-					if (rsp.data.code == 200) {
-						this.$store.state.user = rsp.data.user;
-						
-						this.$router.push({
-							path: '/challenges'
-						})
-						this.$refs.formData.resetFields();
-					}
+				if (rsp.data.user) {
+					this.$store.state.user = rsp.data.user;
+					this.$router.push({
+						path: '/challenges'
+					})
+					this.$refs.formData.resetFields();
 				}
 			},
 			SubmitForm: function() {

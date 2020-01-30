@@ -86,10 +86,13 @@
 				}
 			},
 			DelAnnc: async function(aid) {
-				let rsp = await DelAnnouncement(this, aid, this.$store.state.token);
+				let rsp = await DelAnnouncement(this, {
+					'aid': aid,
+					'user': this.$store.state.user
+				});
 				this.$message({
-					type: 'success',
-					message: '删除成功'
+					type: 'warning',
+					message: '已删除'
 				});
 				this.InitAnnc();
 			},
@@ -110,7 +113,7 @@
 				let rsp = await AddAnnouncement(this, {
 					'title': this.title,
 					'body': this.body,
-					'token': this.$store.state.token,
+					'user': this.$store.state.user,
 				})
 				this.showDialog = false;
 				switch (rsp.data.code) {
@@ -126,7 +129,6 @@
 							type: 'error',
 							message: 'token已失效,请重新登录!'
 						});
-						this.$store.state.token = '';
 						this.$store.state.user = {};
 						break;
 					default:

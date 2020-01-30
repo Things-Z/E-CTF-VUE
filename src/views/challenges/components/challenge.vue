@@ -31,7 +31,10 @@
 				try {
 					this.loading = true;
 					this.challengeData = [];
-					let rsp = await GetChallenges(this, this.type, this.$store.state.token);
+					let rsp = await GetChallenges(this, {
+						'ctype': this.type,
+						'user': this.$store.state.user
+					});
 					let data = rsp.data.challenges;
 					let idx = 0;
 					while (idx < data.length) {
@@ -56,7 +59,10 @@
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(async () => {
-					let rsp = await DelChallenge(this, challenge.cid, this.$store.state.token);
+					let rsp = await DelChallenge(this, {
+						'cid': challenge.cid, 
+						'user': this.$store.state.user
+					});
 					if (rsp.data.code == 200) {
 						this.$message({
 							type: 'warning',
@@ -76,8 +82,8 @@
 			this.InitData();
 		},
 		computed: {
-			token: function() {
-				return this.$store.state.token;
+			user: function() {
+				return this.$store.state.user;
 			}
 		},
 		watch: {
@@ -85,7 +91,7 @@
 				// 实时切换web
 				this.InitData()
 			},
-			token: function() {
+			user: function() {
 				this.InitData();
 			}
 		},

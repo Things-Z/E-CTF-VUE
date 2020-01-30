@@ -55,9 +55,13 @@
 					value
 				}) => {
 					//检查是否登录
-					if (this.$store.state.token) {
+					if (this.$store.state.user) {
 						//提交flag
-						let rsp = await SubmitFlag(this, this.challenge.cid, value, this.$store.state.token);
+						let rsp = await SubmitFlag(this, {
+							'cid': this.challenge.cid, 
+							'flag': value, 
+							'user': this.$store.state.user
+						});
 						switch (rsp.data.code) {
 							// glag正确
 							case 200:
@@ -98,7 +102,6 @@
 									type: 'error',
 									message: 'token已失效,请重新登录!'
 								});
-								this.$store.state.token = '';
 								this.$store.state.user = {};
 								break;
 							default:

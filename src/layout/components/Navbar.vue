@@ -10,14 +10,14 @@
 			<el-menu-item index="/scoreCard">
 				<i class="el-icon-data-line"></i>计分板</el-menu-item>
 			<el-menu-item index="/about">关于</el-menu-item>
-			<el-menu-item v-if="!userName" index="/re-lo" style="float: right;">
+			<el-menu-item v-if="!user.name" index="/re-lo" style="float: right;">
 				登录
 				<el-divider direction="vertical"></el-divider>
 				注册
 			</el-menu-item>
-			<el-submenu index="/" v-if="userName" style="float: right;">
-				<template slot="title">{{userName}}</template>
-				<el-menu-item index="/userInfo">个人中心</el-menu-item>
+			<el-submenu index="/" v-if="user.name" style="float: right;">
+				<template slot="title">{{user.name}}</template>
+				<el-menu-item @click="ToUserInfo">个人中心</el-menu-item>
 				<el-menu-item @click="Logout">注销</el-menu-item>
 			</el-submenu>
 		</el-menu>
@@ -40,8 +40,11 @@
 			}
 		},
 		methods: {
+			ToUserInfo: function(){
+				this.$router.push({path:'/userInfo', query:{'uid':this.$store.state.user.uid}})
+			},
+			
 			Logout: function() {
-				this.$store.state.token = '';
 				this.$store.state.user = {};
 			}
 		},
@@ -49,8 +52,8 @@
 			this.$data.activeIndex = this.$route.path;
 		},
 		computed: {
-			userName: function() {
-				return this.$store.state.user.userName;
+			user: function() {
+				return this.$store.state.user;
 			}
 		},
 		watch: {

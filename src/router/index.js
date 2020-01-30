@@ -13,7 +13,6 @@ const routes = [{
 	redirect: '/index',
 	children: [{
 			path: 'index',
-			name: 'Index',
 			component: () => import('@/views/index/index'),
 			meta: {
 				title: 'index'
@@ -21,7 +20,6 @@ const routes = [{
 		},
 		{
 			path: 'challenges',
-			name: 'Challenges',
 			component: () => import('@/views/challenges/index'),
 			meta: {
 				title: 'challenges'
@@ -29,7 +27,6 @@ const routes = [{
 		},
 		{
 			path: 'scoreCard',
-			name: 'Scorecard',
 			component: () => import('@/views/scoreCard/index'),
 			meta: {
 				title: 'scoreCard'
@@ -37,7 +34,6 @@ const routes = [{
 		},
 		{
 			path: 'about',
-			name: 'about',
 			component: () => import('@/views/about/index'),
 			meta: {
 				title: 'about'
@@ -48,6 +44,15 @@ const routes = [{
 			name: 'Re-lo',
 			component: () => import('@/views/re-lo/index'),
 		},
+		{
+			path: 'userInfo',
+			component: () => import('@/views/userInfo/index'),
+			// props: (route) => ({ query: route.query.uid }),
+			meta: {
+				title: 'userInfo'
+			}
+			
+		}
 	]
 
 }]

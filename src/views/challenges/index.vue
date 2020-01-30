@@ -109,7 +109,7 @@
 			},
 			Submit: async function() {
 				let rsp = await AddChallenge(this, {
-					'token': this.$store.state.token,
+					'user': this.$store.state.user,
 					'type': this.type,
 					'title': this.title,
 					'des': this.des,
@@ -118,7 +118,7 @@
 				})
 				if (rsp.data.code == 200) {
 					this.showDialog = false
-					this.$notify({
+					this.$message({
 						title: '成功',
 						message: '添加题目成功',
 						type: 'success'

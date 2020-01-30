@@ -6,13 +6,13 @@ export function Login(vue, data) {
 	})
 }
 
-export function GetUserInfo(vue, token) {
+export function GetUserInfo(vue, uid) {
 	
 	return vue.axios({
 		url: '/userInfo',
-		method: 'post',
-		data: {
-			token
+		method: 'get',
+		params: {
+			uid
 		}
 	})
 }
@@ -35,14 +35,11 @@ export function IsExists(vue, value) {
 	})
 }
 
-export function GetChallenges(vue, ctype, token) {
+export function GetChallenges(vue, data) {
 	return vue.axios({
 		url: '/challenges',
 		method: 'post',
-		data: {
-			ctype,
-			token
-		}
+		data: data
 	})
 }
 
@@ -54,26 +51,19 @@ export function AddChallenge(vue, data) {
 	})
 }
 
-export function DelChallenge(vue, cid, token) {
+export function DelChallenge(vue, data) {
 	return vue.axios({
 		url: '/del_challenge',
 		method: 'post',
-		data: {
-			cid,
-			token
-		}
+		data: data
 	})
 }
 
-export function SubmitFlag(vue, cid, flag, token) {
+export function SubmitFlag(vue, data) {
 	return vue.axios({
 		url: '/submit_flag',
 		method: 'post',
-		data: {
-			cid,
-			flag,
-			token
-		}
+		data: data
 	})
 }
 
@@ -93,14 +83,11 @@ export function AddAnnouncement(vue, data) {
 	})
 }
 
-export function DelAnnouncement(vue, aid, token) {
+export function DelAnnouncement(vue, data) {
 	return vue.axios({
 		url: '/del_announcement',
 		method: 'post',
-		data: {
-			aid,
-			token
-		}
+		data: data
 	})
 }
 
