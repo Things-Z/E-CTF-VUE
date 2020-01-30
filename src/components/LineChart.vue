@@ -98,8 +98,8 @@
 					},
 					dataZoom: [{ // 这个dataZoom组件，默认控制x轴。
 						type: 'inside', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
-						start: 80, 
-						end: 100 //取后20%
+						start: 0, 
+						end: 100 //全部展示
 					}],
 					grid: {
 						left: 10,
