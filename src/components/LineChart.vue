@@ -70,7 +70,7 @@
 						}
 					},
 					data: data,
-					animationDuration: 6000,
+					animationDuration: 3000,
 					animationEasing: 'cubicInOut'
 				};
 			},
