@@ -8,11 +8,16 @@
 ## 效果展示:
 > 还有很多细节动画效果没法展示，细节请查看项目实例
 
+## 自述
+> 我只是想做一个高颜值，简约可用的靶场面板，更多功能待更新，希望各位走过路过，留个star :)
+
 ![login](./img/login.png)
 
 ![register](./img/register.png)
 
 ![scoreCard](./img/scoreCard.png)
+
+![userInfo](./img/userInfo.png)
 
 ![challenges](./img/challenges.png)
 
@@ -44,8 +49,3 @@ npm run build
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-
-## 自述
-> 我只是想做一个高颜值，简约可用的靶场面板，更多功能带更新，希望各位走过路过，留个star :)
