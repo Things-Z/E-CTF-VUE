@@ -2,7 +2,7 @@
 	<div class="ScoreCard">
 
 		<div class="container">
-			<h1 style="text-align: center; color: #409EFF;">计分板</h1>
+			<h1 style="text-align: center; color: #409EFF;">记分板</h1>
 			<el-divider content-position="right">
 				<el-popover placement="top-start" width="150" trigger="hover">
 					<div><i class="el-icon-refresh" style="color: #67C23A;"></i><span style="margin-left: 5px;">手动更新数据。</span></div>

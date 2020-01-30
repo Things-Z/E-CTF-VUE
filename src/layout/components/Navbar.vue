@@ -8,7 +8,7 @@
 				<i class="el-icon-s-flag"></i>训练场
 			</el-menu-item>
 			<el-menu-item index="/scoreCard">
-				<i class="el-icon-data-line"></i>计分板</el-menu-item>
+				<i class="el-icon-data-line"></i>记分板</el-menu-item>
 			<el-menu-item index="/about">关于</el-menu-item>
 			<el-menu-item v-if="!user.name" index="/re-lo" style="float: right;">
 				登录
